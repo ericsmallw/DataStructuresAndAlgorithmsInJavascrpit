@@ -2,26 +2,24 @@
  * Created by esmallwood on 8/21/2015.
  */
 var TwoThreeFourTree = function(){
-    this.root = null;
-
-    var DataItem = function(val){
-        var value = val;
-        this.display = function(){
-            console.log(value);
-        }
-    };
+    var root = null;
 
     var Node = function(){
         this.childArray = [];
         this.itemArray = [];
     };
 
-    this.insert = function(val){
-        if(root === null){
+    this.display = function(){
+        console.log(root.itemArray);
+        console.log(root.childArray);
+    };
+
+    this.insertNode = function(val){
+        if(root == null){
             root = new Node();
             root.itemArray[0] = val;
         }else{
-            //check if the
+            findLeafForInsertion(root, val);
         }
     };
 
@@ -33,19 +31,28 @@ var TwoThreeFourTree = function(){
     function findLeafForInsertion(node, value){
         //check to see if the node is a leaf or not
         if(node.childArray.length === 0){
-            insertIntoLeaf(node, value);
+            //check if leaf is full, if so split otherwise insert
+            if(node.itemArray.length < 3){
+                insertIntoLeaf(node, value);
+            }else{
+                //must be root node because we look forward from parents to detect full children
+                return findLeafForInsertion(splitNode(null, node), value);
+            }
         }else{
 
             var nextChild;
             for(var i = 0; i < node.itemArray.length; i++){
-                if(value < node.itemArray[i]) nextChild = node.childArray[i];
+                if(value < node.itemArray[i]){
+                    nextChild = node.childArray[i];
+                    break;
+                }
             }
 
             //if this loop ends then go to the fourth child because the value is larger than all items in parent
-            nextChild = node.childArray[3];
+            if(nextChild == undefined)nextChild = node.childArray[i];
 
             //check if this child is full or not, if so split
-            if(nextChild.itemArray.length < 3)return findLeafForInsertion(nextChild, value);
+            if(nextChild.itemArray == undefined || nextChild.itemArray.length < 3)return findLeafForInsertion(nextChild, value);
             else return findLeafForInsertion(splitNode(node, nextChild), value);
         }
     }
@@ -55,7 +62,7 @@ var TwoThreeFourTree = function(){
             root = new Node();
             root.itemArray.push(node.itemArray[1]);
             root.childArray.push(node);
-            
+
             node.itemArray[1] = null;
 
             var rootNewChild = new Node();
@@ -122,3 +129,11 @@ var TwoThreeFourTree = function(){
     }
 };
 
+var tree = new TwoThreeFourTree();
+tree.insertNode(15);
+tree.insertNode(35);
+tree.insertNode(5);
+tree.insertNode(25);
+tree.insertNode(7);
+
+tree.display();
