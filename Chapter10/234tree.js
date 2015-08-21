@@ -54,8 +54,24 @@ var TwoThreeFourTree = function(){
         if(node === root){
             root = new Node();
             root.itemArray.push(node.itemArray[1]);
-            root.childArray.push(node.itemArray[0]);
-            root.childArray.push(node.itemArray[2]);
+            root.childArray.push(node);
+            
+            node.itemArray[1] = null;
+
+            var rootNewChild = new Node();
+
+            rootNewChild.itemArray.push(node.itemArray[2]);
+
+            //add two right most children of node being split to new child
+            for(var k = 2; k < node.childArray.length; k++){
+                rootNewChild.push(node.childArray[k]);
+                node.childArray[k] = null;
+            }
+
+            root.childArray.push(rootNewChild);
+
+            node.itemArray[2] = null;
+
             //move right two child array items to new roots right child
             //and move right to child array items to new roots left child
             for(var i = 0; i < node.childArray.length; i++){
@@ -66,19 +82,6 @@ var TwoThreeFourTree = function(){
             return root;
         }else{
             //place nodes middle child in parent
-            //var temp;
-            //for(var j = 0; j < 3; j++){
-            //    if(parent.itemArray[j] == null){
-            //        parent.itemArray[j] = node.itemArray[1];
-            //        break;
-            //    }
-            //
-            //    if(node.itemArray[1] < parent.itemArray[j]){
-            //        temp = parent.itemArray[j];
-            //        parent.itemArray[j] = node.itemArray[1];
-            //        node.itemArray[1] = temp;
-            //    }
-            //}
             insertIntoLeaf(parent, node.itemArray[1]);
 
             //empty the nodes central item
@@ -87,6 +90,13 @@ var TwoThreeFourTree = function(){
             //create new child for parent and add nodes left child as first item
             var newChild = new Node();
             newChild.itemArray.push(node.itemArray[2]);
+
+            //add two right most children of node being split to new child
+            for(var j = 2; j < node.childArray.length; j++){
+                newChild.push(node.childArray[j]);
+                node.childArray[j] = null;
+            }
+
             parent.childArray.push(newChild);
 
             node.itemArray[2] = null;
