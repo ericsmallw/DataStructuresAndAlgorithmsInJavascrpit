@@ -40,9 +40,9 @@ function getRandomArbitrary(min, max) {
 }
 
 var arr = new ArraySh();
-var num = 10;
+var num = 10000;
 for(var i = 0; i < num; i++){
-    arr.insert(Math.round(getRandomArbitrary(0, 100)));
+    arr.insert(Math.round(getRandomArbitrary(0, 10000)));
 }
 arr.display();
 

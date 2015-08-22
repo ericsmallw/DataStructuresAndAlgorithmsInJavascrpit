@@ -29,20 +29,19 @@ var ArrayBub = function(){
 
 };
 
-var array = new ArrayBub();
+var arr = new ArrayBub();
 
-array.insert(5);
-array.insert(3);
-array.insert(39);
-array.insert(12);
-array.insert(75);
-array.insert(30);
-array.insert(0);
-array.insert(0);
-
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+var num = 100000;
+for(var i = 0; i < num; i++){
+    arr.insert(Math.round(getRandomArbitrary(0, 10000)));
+}
 
 
-array.display();
 
-array.insertionSort();
-array.display();
+arr.display();
+
+arr.insertionSort();
+arr.display();
