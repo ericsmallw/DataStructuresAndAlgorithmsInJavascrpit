@@ -37,12 +37,12 @@ var TwoThreeFourTree = function(){
                 insertIntoLeaf(node, value);
             }else{
                 //must be root node because we look forward from parents to detect full children
-                return findLeafForInsertion(splitNode(null, node), value);
+                return findLeafForInsertion(splitNode(null, node, value), value);
             }
         }else{
-            //if this node is full, then it must be the root
+            //if this node is full, then it must be the root because we look forward and dectect fullnodes ahead of time
             if(node.itemArray.length == 3){
-                return findLeafForInsertion(splitNode(null, node), value);
+                return findLeafForInsertion(splitNode(null, node, value), value);
             }
 
             var nextChild;
@@ -55,15 +55,16 @@ var TwoThreeFourTree = function(){
             }
 
             //if this loop ends then go to the fourth child because the value is larger than all items in parent
-            if(nextChild == undefined)nextChild = node.childArray[i];
+            if(node.childArray[i] === undefined)node.childArray.push(new Node);
+            if(nextChild === undefined)nextChild = node.childArray[i];
 
             //check if this child is full or not, if so split
             if(nextChild.itemArray == undefined || nextChild.itemArray.length < 3)return findLeafForInsertion(nextChild, value);
-            else return findLeafForInsertion(splitNode(node, nextChild, i), value);
+            else return findLeafForInsertion(splitNode(node, nextChild, value, i), value);
         }
     }
 
-    function splitNode(parent, node, currentChildIndex){
+    function splitNode(parent, node,  value, currentChildIndex){
         if(node === root){
             root = new Node();
             root.itemArray.push(node.itemArray[1]);
@@ -91,7 +92,7 @@ var TwoThreeFourTree = function(){
                 node.childArray.pop();
             }
 
-            return root;
+            return value < root.itemArray[0] ? root.childArray[0] : root.childArray[1];
         }else{
             //place nodes middle child in parent
             insertIntoLeaf(parent, node.itemArray[1]);
@@ -102,24 +103,40 @@ var TwoThreeFourTree = function(){
 
             //add two right most children of node being split to new child
             for(var j = 2; j < node.childArray.length; j++){
-                newChild.push(node.childArray[j]);
+                newChild.childArray.push(node.childArray[j]);
                 node.childArray.pop();
             }
 
             //push child into position beside original node
-            var temp;
-            if(parent.childArray[currentChildIndex + 1] !== null && parent.childArray[currentChildIndex + 1] !== undefined)
-                temp = parent.childArray[currentChildIndex + 1];
+            for(var m = currentChildIndex; m < parent.childArray.length; m++){
+                var temp = null;
+                if(parent.childArray[m + 1] !== null && parent.childArray[m + 1] !== undefined)
+                    temp = parent.childArray[m + 1];
 
-            parent.childArray[currentChildIndex + 1] = newChild;
+                parent.childArray[m + 1] = newChild;
 
-            if(temp != undefined)
-                parent.childArray[currentChildIndex + 2] = temp;
+                if(temp != null)
+                    newChild = temp;
+                else break;
+            }
 
             node.itemArray.pop();
             node.itemArray.pop();
 
-            return parent;
+            //find correct insertion path
+            var nextChild;
+            var l;
+            for(l = 0; l < parent.itemArray.length; l++){
+                if(value < parent.itemArray[l]){
+                    nextChild = parent.childArray[l];
+                    break;
+                }
+            }
+
+            //if this loop ends then go to the fourth child because the value is larger than all items in parent
+            if(nextChild == undefined)nextChild = parent.childArray[l];
+
+            return nextChild;
         }
     }
 
@@ -140,18 +157,20 @@ var TwoThreeFourTree = function(){
     }
 };
 
+function getRandomArbitrary(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+}
 var tree = new TwoThreeFourTree();
-tree.insertNode(15);
-tree.insertNode(5);
-tree.insertNode(35);
-tree.insertNode(25);
-tree.insertNode(7);
-tree.insertNode(8);
-tree.insertNode(9);
-tree.insertNode(40);
-tree.insertNode(26);
-tree.insertNode(27);
-tree.insertNode(28);
-tree.insertNode(3);
+
+for (var i = 0; i < 112; i++) {
+    var randomNum = getRandomArbitrary(0, 100);
+    console.log(randomNum);
+    tree.insertNode(randomNum);
+}
 
 tree.display();
+
+
+
+
+
